@@ -1,107 +1,113 @@
-# TG.Common
+# TG.Common.WinForms
 
-This library provides methods for logging to file, object cloning delaying when
-to invoke a method and various other useful tools.
-I try to add helpers that I end up using regularly over the years, such as the
-InputBox, AppData and AssemblyInfo.
+Windows Forms utility components extracted from the broader TG.Common library. This package contains small, reusable dialog/forms and helpers that I found myself re‑implementing across projects.
 
-## AssemblyInfo
+## Contents
 
-This class helps to get various Assembly information, such as the Version,
-InformationVersion, Title or Company. The default assembly referenced is Assembly.GetEntryAssembly().
+Currently included:
 
-### Basic AssemblyInfo Usage
+| Component | Purpose |
+|-----------|---------|
+| `InputBox` | Simple modal dialog to prompt the user for a single text value (optionally multi‑line or password, and can integrate a search dialog). |
+| `SearchFormBase` | Base class you can derive from to implement a search / selection popup that feeds back into `InputBox`. |
+| `WaitForm` | Minimal waiting/progress (marquee) dialog with optional parent‑centering and auto‑close timeout. |
+| `ExMessageBox` | Placeholder for a richer message box (currently minimal). |
+| `ValueOptions` | Enumeration controlling how a returned value from a search form is applied (`Replace`, `Append`, `AppendSemiColonSeparated`). |
+| `ShortcutManager` | Stub for creating Windows shortcuts (not supported in .NET SDK build targets here—always throws). |
 
-```cs
-Console.WriteLine(AssemblyInfo.Title);
-Console.WriteLine(AssemblyInfo.InformationalVersion);
+## Target Frameworks
+
+Multi‑targeted for:
+
+`net8.0-windows; net6.0-windows; net48; net472`
+
+Pick the highest your application supports. All targets require Windows (WinForms).
+
+## Installation
+
+NuGet (example):
+
+```powershell
+dotnet add package TG.Common.WinForms
 ```
 
-### Changing the referenced assembly
+Or add a PackageReference manually in your project file.
 
-```cs
-AssemblyInfo.ReferenceAssembly = Assembly.GetCallingAssembly();
-```
+## InputBox Usage
 
-Any subsequent calls on the AssemblyInfo properties will pull from the new
-ReferenceAssembly.
-
-## AppData
-
-The AppData class is a helper for generating a folder in the user's AppData
-folder. If the folder doesn't exist, it will automatically be created.
-There are several schemes to choose from for the subfolder structure.
-For Windows, that would be at C:\Users\\\<user>\Roaming.
-In Linux, that would be at ~/.config.
-
-### Schemes
-
-- CompanyTitle
-  - Generates %AppData%\AssemblyInfo.Company\AssemblyInfo.Title
-- CompanyProduct
-  - Generates %AppData%\AssemblyInfo.Company\AssemblyInfo.Product
-- Company
-  - Generates %AppData%\AssemblyInfo.Company
-- Title
-  - Generates %AppData%\AssemblyInfo.Title
-- Product
-  - Generates %AppData%\AssemblyInfo.Product
-
-You can also call AppData.GetAppDataPath(AppDataSchemes) for better control or
-setting the property AppData.DefaultScheme.
-
-## LogManager
-
-The LogManager class is a simple file logger were you only need something small
-to log to a file. It is suitable if you only need a small library to write error
-to a log. It doesn't currently have any mechanism for writing for only certain
-log levels but that could be added if there is interest.
-
-### Log Example
-
-```cs
-// Sets up logging folder using AppData.AppDataPath/Logging.
-// Setting AppData.DefaultScheme can control the folder structure.
-LogManager.InitializeDefaultLog();
-
-try
+```csharp
+// Basic usage
+using var dlg = new InputBox("User Name", "Enter the user name:", string.Empty);
+if (dlg.ShowDialog() == DialogResult.OK)
 {
-    throw new Exception("Something bad happened!");
+  string value = dlg.Value; // user input
 }
-catch (Exception ex)
-{
-    LogManager.WriteExceptionToLog(ex);
-}
+
+// Allow blank values and multi-line
+var notes = new InputBox("Notes", "Enter notes:", "") { AllowBlankValue = true, MultiLine = true };
 ```
 
-## Crypto
+### Integrating a Search Form
 
-This class is pretty outdated but can still be useful if you need some simple
-encryption. It has options for encrypting/decrypting strings, byte arrays and
-Base64 strings.
+Derive from `SearchFormBase` and set `ResultValue` and optionally `ValueReplaceOption` before closing with `DialogResult.OK`.
 
-## DelayedMethodInvoker
+```csharp
+public class CustomerSearchForm : SearchFormBase
+{
+  public CustomerSearchForm(IEnumerable<string> customers)
+  {
+    // Build UI (omitted)
+  }
 
-This class provides a way to invoke a method after a set amount of time. Once
-initialized, call Invoke and the internal timer is started. You can also
-call the RestartTimer method and the timer will start/restart. That can be
-useful for "debouncing" a button click.
+  private void SelectCustomer(string name)
+  {
+    ResultValue = name;
+    ValueReplaceOption = ValueOptions.Replace;
+    DialogResult = DialogResult.OK;
+    Close();
+  }
+}
 
-## WinForms
+// Usage with InputBox
+var input = new InputBox("Customer", "Select customer:", string.Empty, typeof(CustomerSearchForm));
+```
 
-There are three included forms that can be used if targeting WinForms. InputBox
-is the most common form I use since that does't seem to be built into C#.
+## WaitForm Usage
 
-### Forms
+```csharp
+// Show (non-blocking thread spins the dialog) with default message
+WaitForm.ShowForm();
 
-- InputBox
-  - Prompt for user input.
-- ExMessageBox
-  - Honestly, I don't remember why I created this form.
-- WaitForm
-  - A popup form showing a marquee progress bar and message.
+// Update / show with custom message centered over a parent and auto-close after 5 seconds
+WaitForm.ShowForm("Processing records...", this, 5000);
 
-## Miscellaneous
+// When done
+WaitForm.CloseForm();
+```
 
-This class has one-off helpers. The only notable one would be CloneObject; which
-can do a deep clone of an object.
+## ExMessageBox
+
+Currently a scaffold for a richer message box. The static `Show(string message)` is present but not yet implemented. (Subject to change or removal.) Prefer the built‑in `MessageBox.Show` unless you extend this class.
+
+## ShortcutManager
+
+The methods are stubs that intentionally throw `NotSupportedException` under these targets. They document intended future functionality for creating `.lnk` shortcuts. If you need this today, implement a platform-specific version (e.g., COM interop with `IWshRuntimeLibrary`) in a .NET Framework only project.
+
+## Versioning
+
+Version numbers are derived using [MinVer](https://github.com/adamralph/minver) from Git tags (prefix `v`). Pre‑release identifiers default to `preview.0` until a stable tag is created.
+
+## Roadmap / Ideas
+
+- Flesh out `ExMessageBox` (buttons, icons, copyable text, details expander).
+- Optional cancellation / progress reporting for `WaitForm`.
+- Pluggable value transformers for `InputBox`.
+- Implement functional `ShortcutManager` for supported frameworks.
+
+## Contributing
+
+Feel free to open issues or PRs on GitHub: [https://github.com/troygeiger/TG.Common.WinForms](https://github.com/troygeiger/TG.Common.WinForms)
+
+## License
+
+MIT

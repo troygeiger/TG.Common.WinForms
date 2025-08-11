@@ -3,7 +3,8 @@ using System;
 namespace TG.Common
 {
     /// <summary>
-    /// Provides helpers for creating Windows shortcuts. Not supported in this target.
+    /// Provides helper methods for creating Windows shortcuts. All members throw
+    /// <see cref="NotSupportedException"/> in this target framework build.
     /// </summary>
     public static class ShortcutManager
     {
@@ -17,7 +18,7 @@ namespace TG.Common
         }
 
     /// <summary>
-    /// Creates a Windows shortcut (.lnk) with icon.
+    /// Creates a Windows shortcut (.lnk) with an icon.
     /// </summary>
     /// <returns>Always throws <see cref="NotSupportedException"/> in this build.</returns>
     public static bool CreateShortcut(string path, string target, string arguments, string description, string iconPath)
@@ -26,7 +27,7 @@ namespace TG.Common
         }
 
     /// <summary>
-    /// Creates a Windows shortcut (.lnk) with working directory and icon.
+    /// Creates a Windows shortcut (.lnk) with a working directory and an icon.
     /// </summary>
     /// <returns>Always throws <see cref="NotSupportedException"/> in this build.</returns>
     public static bool CreateShortcut(string path, string target, string arguments, string description, string workingDirectory, string iconPath)

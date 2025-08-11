@@ -24,6 +24,7 @@
 		<PackageReference Include="MinVer" Version="6.0.0">
 			<PrivateAssets>all</PrivateAssets>
 		</PackageReference>
+		<PackageReference Include="TG.Common" Version="3.0.0-preview.0.33" />
 	</ItemGroup>
 
 

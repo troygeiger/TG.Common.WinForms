@@ -8,14 +8,17 @@ using System.Windows.Forms;
 
 namespace TG.Common
 {
+    /// <summary>
+    /// A reusable modal dialog prompting the user for a single textual value with optional search integration.
+    /// </summary>
     public partial class InputBox : Form
     {
         Type searchForm = null;
         bool _allowBlank = false;
 
-        /// <summary>
-        /// Creates a new instance of <see cref="InputBox"/>.
-        /// </summary>
+    /// <summary>
+    /// Initializes a new instance of the <see cref="InputBox"/> class.
+    /// </summary>
         public InputBox()
         {
             InitializeComponent();
@@ -27,9 +30,9 @@ namespace TG.Common
             txtValue.Select();
         }
 
-        /// <summary>
-        /// Creates a new instance of <see cref="InputBox"/>.
-        /// </summary>
+    /// <summary>
+    /// Initializes a new instance of the <see cref="InputBox"/> class using the specified title, description, and value.
+    /// </summary>
         /// <param name="title">The title of the input box.</param>
         /// <param name="description">A brief description of the information being requested.</param>
         /// <param name="value">A value to initialize the <see cref="InputBox"/> with.</param>
@@ -40,9 +43,9 @@ namespace TG.Common
             Value = value;
         }
 
-        /// <summary>
-        /// Creates a new instance of <see cref="InputBox"/>.
-        /// </summary>
+    /// <summary>
+    /// Initializes a new instance of the <see cref="InputBox"/> class with optional search form integration.
+    /// </summary>
         /// <param name="title">The title of the input box.</param>
         /// <param name="description">A brief description of the information being requested.</param>
         /// <param name="value">A value to initialize the <see cref="InputBox"/> with.</param>
@@ -116,9 +119,9 @@ namespace TG.Common
             }
         }
 
-        /// <summary>
-        /// A type that is a base type of <see cref="SearchFormBase"/> that an instance will be created when the search button is clicked.
-        /// </summary>
+    /// <summary>
+    /// Gets or sets a search form type derived from <see cref="SearchFormBase"/> that will be instantiated when the user clicks the search button.
+    /// </summary>
         public Type SearchForm
         {
             get
@@ -195,8 +198,11 @@ namespace TG.Common
             }
         }
 
-        /// <summary>
-        /// Gets or sets whether or not the Ok button is enabled.
-        /// </summary>
+    /// <summary>
+    /// Gets a value indicating whether the OK button is currently enabled.
+    /// This reflects the evaluation performed in <see cref="UpdateOkButton"/>,
+    /// based on <see cref="AllowBlankValue"/> and the current text length.
+    /// </summary>
+    public bool OkButtonEnabled => btnOk.Enabled;
     }
 }

@@ -6,6 +6,9 @@ using System.Windows.Forms;
 
 namespace TG.Common
 {
+    /// <summary>
+    /// Displays a simple non-blocking waiting dialog with optional parent centering and auto-close timeout.
+    /// </summary>
     public partial class WaitForm : Form
     {
         private WaitForm()
@@ -23,39 +26,40 @@ namespace TG.Common
         static Thread _winThread;
         static int _timeout;
 
-        /// <summary>
-        /// Shows the WaitForm with a default message of "Waiting".
-        /// </summary>
+    /// <summary>
+    /// Shows the wait form with a default message of "Waiting".
+    /// Does nothing if the form is already displayed.
+    /// </summary>
         public static void ShowForm()
         {
             ShowForm("Waiting", null, -1);
         }
 
-        /// <summary>
-        /// Show the WaitForm or updates the message.
-        /// </summary>
-        /// <param name="message">The message to display in the WaitForm.</param>
+    /// <summary>
+    /// Shows the wait form or updates the message if it is already showing.
+    /// </summary>
+    /// <param name="message">The message to display.</param>
         public static void ShowForm(string message)
         {
             ShowForm(message, null, -1);
         }
 
-        /// <summary>
-        /// Show the WaitForm or updates the message.
-        /// </summary>
-        /// <param name="message">The message to display in the WaitForm.</param>
-        /// <param name="parent">The parent of the WaitForm.</param>
+    /// <summary>
+    /// Shows the wait form centered over a parent form or updates the message.
+    /// </summary>
+    /// <param name="message">The message to display.</param>
+    /// <param name="parent">The parent form to center over; may be null.</param>
         public static void ShowForm(string message, Form parent)
         {
             ShowForm(message, parent, -1);
         }
 
-        /// <summary>
-        /// Show the WaitForm or updates the message.
-        /// </summary>
-        /// <param name="message">The message to display in the WaitForm.</param>
-        /// <param name="parent">The parent of the WaitForm.</param>
-        /// <param name="autoCloseTimeout">The delay, in milliseconds, when the form should close automatically.</param>
+    /// <summary>
+    /// Shows the wait form or updates the message with optional parent centering and auto-close timeout.
+    /// </summary>
+    /// <param name="message">The message to display.</param>
+    /// <param name="parent">The parent form to center over; may be null.</param>
+    /// <param name="autoCloseTimeout">The delay, in milliseconds, after which the form closes automatically. Use -1 to disable.</param>
         public static void ShowForm(string message, Form parent, int autoCloseTimeout)
         {
             if (_winThread == null)
@@ -127,9 +131,9 @@ namespace TG.Common
 
         private delegate void VoidAction();
 
-        /// <summary>
-        /// Closes the WaitForm.
-        /// </summary>
+    /// <summary>
+    /// Closes the wait form if it is currently displayed.
+    /// </summary>
         public static void CloseForm()
         {
             if (Instance != null)
