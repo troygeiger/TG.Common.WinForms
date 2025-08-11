@@ -1,23 +1,35 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net6.0-windows</TargetFrameworks>
+  <TargetFrameworks>net8.0-windows;net6.0-windows;net48;net472</TargetFrameworks>
     <Description>Windows Forms utilities split from TG.Common.</Description>
     <Authors>Troy Geiger</Authors>
     <Company>Troy Geiger</Company>
-    <RepositoryUrl>https://github.com/troygeiger/TG.Common</RepositoryUrl>
+    <RepositoryUrl>https://github.com/troygeiger/TG.Common.WinForms</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-  <EnableWindowsTargeting>true</EnableWindowsTargeting>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="$(TargetFramework.EndsWith('-windows'))">
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <MinVerTagPrefix>v</MinVerTagPrefix>
+		<MinVerDefaultPreReleaseIdentifiers>preview.0</MinVerDefaultPreReleaseIdentifiers>
+		<MinVerMinimumMajorMinor>3.0</MinVerMinimumMajorMinor>
+		<MinVerVerbosity>normal</MinVerVerbosity>
     <UseWindowsForms>true</UseWindowsForms>
-    <DefineConstants>WINDOWS</DefineConstants>
+    <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
   </PropertyGroup>
+	
+  <ItemGroup>
+		<PackageReference Include="MinVer" Version="6.0.0">
+			<PrivateAssets>all</PrivateAssets>
+		</PackageReference>
+	</ItemGroup>
+
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net48' Or '$(TargetFramework)' == 'net472' ">
+    <PackageReference Include="System.Resources.Extensions" Version="4.7.0" />
+  </ItemGroup>
 
   <ItemGroup>
     <None Include="..\..\README.md">
